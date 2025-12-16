@@ -6,6 +6,9 @@ node_modules/
 *.fdb_latexmk
 *.fls
 *.log
+*.maf
+*.mtc
+*.mtc*
 *.pdf
 *.synctex.gz
 *tsbuildinfo
