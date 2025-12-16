@@ -1,0 +1,42 @@
+\documentclass{article}
+\date{December 16 2025}
+% https://tex.stackexchange.com/questions/96680/a-better-notation-to-denote-arcs-for-an-american-high-school-textbook
+\usepackage{graphicx,tipa}% http://ctan.org/pkg/{graphicx,tipa}
+\newcommand{\arc}[1]{{%
+  \setbox9=\hbox{#1}%
+  \ooalign{\resizebox{\wd9}{\height}{\texttoptiebar{\phantom{A}}}\cr#1}}}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\title{Pie chart and Donut chart}
+\author{cmvb}
+
+\begin{document}
+\maketitle
+\section{General equations for the charts}
+To begin, we need two equations for describing the positions of elements we want to draw for a donut chart. The pie chart is simply a special case of a donut chart where there is no inner radius for that chart. So, have the following equations: 
+\begin{align}
+  (x - h)^2 + (y - k)^2 &= r^2\\
+  (x - h)^2 + (y - k)^2 &= r_i^2
+\end{align} 
+Here \(r_i\) and \(r\) are respectively the inner and outer radii for circles (1) and (2). We have to ensure that $r_i < r$, $r_i \geq 0$, and also $r > 0$ (to at least have a visible chart). $(h, k)$ represents the center of our chart and values $h$ and $k$ may have any value. 
+
+\section{Defining the positions of the sectors}
+Before defining the positions of our sectors, we have to define the starting point and end points of each part of the circles we are cutting. To do so, we can define starting and ending percentages to determine the overall space taken by a sector. Hence, we can define the following values:
+\begin{align}
+  P_s &\in [0, 1[ \\
+  P_e &\in ]P_s, 1]
+\end{align}
+Here $P_s$ is the starting percentage and $P_e$ the end percentage. Now with our percentage values, we can define the bounding points for our sectors. A sector is formed from from points on both circles, and are positioned based on the percentages used. So, we have to define rotation values for both percentages:
+\begin{align}
+  \theta_s &= 2\pi P_s\\
+  \theta_e &= \theta_s + 2\pi P_e
+\end{align}
+Now we can define the sectors with points relating to these percentages. We can define the following points:
+\begin{align*}
+  &A(r_i \cos(\theta_s) + h, r_i \sin(\theta_s))\\
+  &B(r \cos(\theta_s) + h, r \sin(\theta_s))\\
+  &C(r_i \cos(\theta_e) + h, r_i \sin(\theta_e))\\
+  &D(r \cos(\theta_e) + h, r \sin(\theta_e))
+\end{align*}
+To draw a part of our chart, we must draw $\overline{AB}$ followed by $\arc{BD}$ and $\overline{DC}$ joining back by drawing $\arc{CA}$. 
+\end{document}

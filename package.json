@@ -8,10 +8,14 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
+  "description": "A graphing utility",
   "dependencies": {
     "@types/jsdom": "^21.1.7",
     "@types/node": "^22.13.14",
-    "jsdom": "^26.0.0"
+    "jsdom": "^26.0.0",
+    "typescript": "^5.9.3"
+  },
+  "devDependencies": {
+    "ts-node": "^10.9.2"
   }
 }

@@ -1,6 +1,6 @@
 import { PieChartConfig, PieChartValues } from "../../types";
 import { JSDOM } from "jsdom";
-import fs from "fs";
+import * as fs from "fs";
 import Color from "../util/Color";
 import GraphGenerator from "../Generator/Generator";
 import PathD from "../util/PathD";
