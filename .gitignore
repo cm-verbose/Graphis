@@ -1,7 +1,8 @@
+# General
 bin/
 dist/
-node_modules/
 
+# Latex
 *.aux
 *.fdb_latexmk
 *.fls
@@ -11,4 +12,10 @@ node_modules/
 *.mtc*
 *.pdf
 *.synctex.gz
-*tsbuildinfo
+
+# TypeScript
+*.tsbuildinfo
+node_modules/
+
+# Rust
+target/

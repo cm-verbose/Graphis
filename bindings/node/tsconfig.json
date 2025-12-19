@@ -1,7 +1,8 @@
 {
+  // Visit https://aka.ms/tsconfig to read more about this file
   "compilerOptions": {
-    // Environment Settings
-    "module": "commonjs",
+    // See also https://aka.ms/tsconfig/module
+    "module": "nodenext",
     "target": "esnext",
     "types": [],
 
@@ -22,8 +23,5 @@
     "noUncheckedSideEffectImports": true,
     "moduleDetection": "force",
     "skipLibCheck": true,
-
-    "outDir": "./dist",
-    "rootDir": "./src"
   }
 }
