@@ -31,7 +31,7 @@ impl<'a> PieChart<'a> {
     }
   }
 
-  /// Obtain the pie chart as an object 
+  /// Obtain the pie chart as an object
   pub fn get(&mut self) -> Result<SVG, String> {
     let mut base: SVG = self.get_image();
     self.draw_sectors(&mut base)?;

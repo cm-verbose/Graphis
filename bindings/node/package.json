@@ -1,10 +1,10 @@
 {
   "name": "graphis-node",
   "version": "1.0.0",
-  "description": "",
+  "description": "NodeJS bindings for Graphis",
   "main": "index.js",
   "scripts": {
-    "build": "napi build --platform --release --dts graphis.d.ts --js-package-name graphis --output-dir dist/"
+    "build": "napi build --platform --release --dts graphis.d.ts --js-package-name graphis --js graphis.js --output-dir dist/"
   },
   "keywords": [],
   "author": "",
