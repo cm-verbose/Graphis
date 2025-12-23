@@ -28,12 +28,12 @@ impl Graphis {
 
   /// Create a pie chart
   #[napi]
-  pub fn create_pie_chart(&mut self, config: JSPieConfig, data: Vec<JSPieChartData>) -> Result<()> {
+  pub fn create_pie_chart(&mut self, data: Vec<JSPieChartData>, config: JSPieConfig) -> Result<()> {
     let core_config: PieChartConfig = config.into();
     let mut core_data: Vec<PieChartData> = data.into_iter().map(|d| d.into()).collect();
 
-    let mut chart: PieChart<'_> = PieChart::new(core_config, &mut core_data);
-    let chart_data: SVG = chart.get().unwrap();
+    let mut chart: PieChart<'_> = PieChart::new(&mut core_data, core_config);
+    let chart_data: SVG = chart.draw().unwrap();
     self.root.append(chart_data);
     Ok(())
   }

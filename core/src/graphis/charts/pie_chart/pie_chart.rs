@@ -1,122 +1,150 @@
+use std::f64::consts::PI;
+
 use crate::graphis::charts::pie_chart::{
   pie_chart_config::PieChartConfig, pie_chart_data::PieChartData,
 };
-use std::f64::consts::PI;
 use svg::{
   Document, Node,
   node::element::{Path, SVG, path::Data},
 };
 
-/// Represents pie chart and donut chart
+/// Handles the core logic of drawing pie charts and donut charts
 pub struct PieChart<'a> {
-  cx: f64,
-  cy: f64,
-  inner_radius: f64,
-  outer_radius: f64,
-  width: f64,
-  height: f64,
-  data: &'a mut [PieChartData],
+  cfg: PieChartConfig,
+  data: &'a [PieChartData],
 }
 
 impl<'a> PieChart<'a> {
-  pub fn new(config: PieChartConfig, data: &'a mut [PieChartData]) -> Self {
-    Self {
-      cx: config.center.0,
-      cy: config.center.1,
-      inner_radius: config.inner_radius,
-      outer_radius: config.outer_radius,
-      width: config.chart_width,
-      height: config.chart_height,
-      data,
+  pub fn new(data: &'a [PieChartData], cfg: PieChartConfig) -> Self {
+    Self { cfg, data }
+  }
+
+  /// Draw the sectors with the specified data.
+  pub fn draw(&'a mut self) -> Result<SVG, String> {
+    let PieChartConfig {
+      chart_width,
+      chart_height,
+      ..
+    } = self.cfg;
+    let mut root = Document::new().set("viewBox", (0, 0, chart_width, chart_height));
+
+    if self.data.len() == 1 {
+      self.draw_singular_sector(&mut root)?;
+    } else {
+      self.draw_sectors(&mut root)?
     }
+    Ok(root)
   }
 
-  /// Obtain the pie chart as an object
-  pub fn get(&mut self) -> Result<SVG, String> {
-    let mut base: SVG = self.get_image();
-    self.draw_sectors(&mut base)?;
+  /// Draw a singular sector when one value is available
+  fn draw_singular_sector(&'a mut self, root: &mut SVG) -> Result<(), String> {
+    let color = &self.data[0].color;
+    let width: f64 = self.cfg.width;
+    let height: f64 = self.cfg.height;
+    let h = self.cfg.center.0;
+    let k = self.cfg.center.1;
+    let rw = self.cfg.radial_width + width;
+    let rh = self.cfg.radial_width + height;
 
-    Ok(base)
-  }
+    let (sin_rot, cos_rot) = self.cfg.rotation.sin_cos();
+    let rotation_deg = self.cfg.rotation.to_degrees();
 
-  /// Obtains the image on which to draw on
-  fn get_image(&mut self) -> SVG {
-    let image: SVG = Document::new().set("viewBox", (0, 0, self.width, self.height));
-    return image;
-  }
+    let points: [(f64, f64); 4] = [
+      (width * cos_rot + h, width * sin_rot + k),
+      (rw * cos_rot + h, rw * sin_rot + k),
+      (-width * cos_rot + h, -width * sin_rot + k),
+      (-rw * cos_rot + h, -rw * sin_rot + k),
+    ];
 
-  /// Draws circular sectors on the image
-  fn draw_sectors(&mut self, base: &mut SVG) -> Result<(), String> {
-    let r_i: f64 = self.inner_radius;
-    let r_o: f64 = self.outer_radius;
-    let cos = |x| f64::cos(x);
-    let sin = |x| f64::sin(x);
-    let h = self.cx;
-    let k = self.cy;
-    let pir: f64 = PI * 2.;
+    let path_d = Data::new()
+      .move_to(points[0])
+      .line_to(points[1])
+      .elliptical_arc_to((rw, rh, rotation_deg, 0, 1, points[3]))
+      .elliptical_arc_to((rw, rh, rotation_deg, 0, 1, points[1]))
+      .line_to(points[0])
+      .elliptical_arc_to((width, height, rotation_deg, 0, 0, points[2]))
+      .elliptical_arc_to((width, height, rotation_deg, 0, 0, points[0]))
+      .close();
 
-    let data: &mut [PieChartData] = self.get_data()?;
-
-    // Starting value
-    let mut sv: f64 = 0.;
-    let start_angle: f64 = 0.;
-
-    let mut curr_inner = (r_i * cos(start_angle) + h, -r_i * sin(start_angle) + k);
-    let mut curr_outer = (r_o * cos(start_angle) + h, -r_o * sin(start_angle) + k);
-
-    for data_point in data {
-      let p: f64 = data_point.data;
-      let end: f64 = pir * (p + sv);
-
-      let next_inner = (r_i * cos(end) + h, -r_i * sin(end) + k);
-      let next_outer = (r_o * cos(end) + h, -r_o * sin(end) + k);
-
-      let path_d: Data = Data::new()
-        .move_to(curr_inner)
-        .line_to(curr_outer)
-        .elliptical_arc_to((
-          r_o,
-          r_o,
-          0.,
-          if p > 0.5 { 1 } else { 0 },
-          0,
-          next_outer.0,
-          next_outer.1,
-        ))
-        .line_to(next_inner)
-        .elliptical_arc_to((
-          r_i,
-          r_i,
-          0.,
-          if p > 0.5 { 1 } else { 0 },
-          1,
-          curr_inner.0,
-          curr_inner.1,
-        ))
-        .close();
-
-      let path = Path::new()
-        .set("d", path_d)
-        .set("fill", data_point.color.clone());
-      curr_inner = next_inner;
-      curr_outer = next_outer;
-      sv += p;
-      base.append(path);
-    }
+    let path = Path::new().set("d", path_d).set("fill", color.clone());
+    root.append(path);
     Ok(())
   }
 
-  /// Get the transformed data from the actual data
-  fn get_data(&mut self) -> Result<&mut [PieChartData], String> {
+  /// Draw multiple sectors on the graph
+  fn draw_sectors(&mut self, root: &mut SVG) -> Result<(), String> {
     let mut sum: f64 = self.data.iter().map(|d| d.data).sum();
     if sum == 0. {
-      return Err(String::from("Invalid values"));
+      return Err("Invalid values provided: the sum of values is 0".to_string());
     }
     sum = 1. / sum;
 
-    for chart_data in self.data.iter_mut() {
-      chart_data.data = chart_data.data * sum;
+    let width = self.cfg.width;
+    let height = self.cfg.height;
+    let h = self.cfg.center.0;
+    let k = self.cfg.center.1;
+    let rw = width + self.cfg.radial_width;
+    let rh = height + self.cfg.radial_width;
+    let rotation = self.cfg.rotation.to_radians();
+    let offset = -2. * PI;
+
+    let mut sv: f64 = 0.;
+    let start_angle: f64 = 0.;
+    let (sin_rot, cos_rot) = rotation.sin_cos();
+    let (sin_cur, cos_cur) = start_angle.sin_cos();
+
+    let mut current_inner = (
+      (width * cos_rot) * cos_cur - (height * sin_rot) * sin_cur + h,
+      (width * sin_rot) * cos_cur + (height * cos_rot) * sin_cur + k,
+    );
+
+    let mut current_outer = (
+      (rw * cos_rot) * cos_cur - (rh * sin_rot) * sin_cur + h,
+      (rw * sin_rot) * cos_cur + (rh * cos_rot) * sin_cur + k,
+    );
+
+    for data in self.data {
+      let transformed = data.data * sum;
+
+      let end_angle: f64 = offset * (transformed + sv);
+      let (sin_end, cos_end) = end_angle.sin_cos();
+
+      let next_inner = (
+        (width * cos_rot) * cos_end - (height * sin_rot) * sin_end + h,
+        (width * sin_rot) * cos_end + (height * cos_rot) * sin_end + k,
+      );
+      let next_outer = (
+        (rw * cos_rot) * cos_end - (rh * sin_rot) * sin_end + h,
+        (rw * sin_rot) * cos_end + (rh * cos_rot) * sin_end + k,
+      );
+
+      let path_d: Data = Data::new()
+        .move_to(current_inner)
+        .line_to(current_outer)
+        .elliptical_arc_to((
+          rw,
+          rh,
+          rotation.to_degrees(),
+          if transformed > 0.5 { 1 } else { 0 },
+          0,
+          next_outer,
+        ))
+        .line_to(next_inner)
+        .elliptical_arc_to((
+          width,
+          height,
+          rotation.to_degrees(),
+          if transformed > 0.5 { 1 } else { 0 },
+          1,
+          current_inner,
+        ))
+        .close();
+      let path = Path::new().set("d", path_d).set("fill", data.color.clone());
+      current_inner = next_inner;
+      current_outer = next_outer;
+      sv += transformed;
+      root.append(path)
     }
-    Ok(self.data)
+    Ok(())
   }
 }

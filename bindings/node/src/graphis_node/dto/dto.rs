@@ -7,10 +7,12 @@ use napi_derive::napi;
 #[napi(object)]
 pub struct JSPieConfig {
   pub center: (f64, f64),
-  pub inner_radius: f64,
-  pub outer_radius: f64,
-  pub chart_width: f64,
+  pub chart_width: f64, 
   pub chart_height: f64,
+  pub width: f64,
+  pub height: f64,
+  pub rotation: f64,
+  pub radial_width: f64,
 }
 
 /// JavaScript pie chart data data transfer object
@@ -24,10 +26,13 @@ impl From<JSPieConfig> for PieChartConfig {
   fn from(value: JSPieConfig) -> Self {
     PieChartConfig {
       center: value.center,
-      inner_radius: value.inner_radius,
-      outer_radius: value.outer_radius,
+      chart_height: value.chart_height, 
       chart_width: value.chart_width,
-      chart_height: value.chart_height,
+      width: value.width,
+      height: value.height,
+      rotation: value.rotation,
+      radial_width: value.radial_width,
+
     }
   }
 }

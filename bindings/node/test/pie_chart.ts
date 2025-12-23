@@ -4,29 +4,36 @@ import { Graphis, JsPieChartData } from "../dist/graphis";
 let sheet = new Graphis(500, 500);
 const data: JsPieChartData[] = [
   {
-    color: "red",
+    color: "#f08080",
     data: 1,
   },
   {
-    color: "blue",
+    color: "#f4978e",
     data: 1,
   },
   {
-    color: "green",
+    color: "#f8ad9d",
+    data: 1,
+  },
+    {
+    color: "#fbc4ab",
+    data: 1,
+  },
+      {
+    color: "#ffdab9",
     data: 1,
   },
 ];
 
-sheet.createPieChart(
-  {
-    center: [250, 250],
-    chartHeight: 500,
-    chartWidth: 500,
-    outerRadius: 200,
-    innerRadius: 100,
-  },
-  data
-);
+sheet.createPieChart(data, {
+  center: [250, 250],
+  chartHeight: 500,
+  chartWidth: 500,
+  height: 70,
+  width: 20,
+  radialWidth: 50,
+  rotation: -70,
+});
 
 if (!fs.existsSync("./bin")) {
   fs.mkdirSync("./bin");
