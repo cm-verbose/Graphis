@@ -1,11 +1,5 @@
 [workspace]
-resolver = "2"
+resolver = "3"
 
-members = [
-  "core",
-  "bindings/node"
-]
-
-exclude = [
-  "bindings/node/node_modules"
-]
+members = ["core", "bindings/node"]
+exclude = ["bindings/node/node_modules"]

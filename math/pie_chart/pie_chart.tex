@@ -9,58 +9,57 @@
 \usepackage{amsfonts}
 \title{Pie chart and Donut chart}
 \author{cmvb}
-
 \begin{document}
 \maketitle
 \section{General equations for the loci of the charts}
-To begin, we have two equations to describe two curves that serve as the possible positions for our points (loci). One of the two equations serves to describe the inner radius of the donut chart, but can be ignored if we aim to draw a pie chart. To allow more control over the charts, the equations represent two rotated ellipses for better control over both elements. So we have the following equations: 
+To begin, we have two equations to describe two curves that serve as the possible positions for our points (loci). One of the two equations serves to describe the inner radius of the donut chart but can be ignored if we aim to draw a pie chart. To allow more control over the charts, the equations represent two rotated ellipses for better control over both elements. So, we have the following equations: 
 \begin{align}
   \frac{\big((x - h) \cos(\theta_i) + (y - k) \sin(\theta_i)\big)^2}{a_i^2} + \frac{\big((x - h) \sin(\theta_i) - (y - k) \cos(\theta_i)\big)^2}{b_i^2} &= 1\\
   \frac{\big((x - h) \cos(\theta_i) + (y - k) \sin(\theta_i)\big)^2}{(a_i + \Delta_o)^2} + \frac{\big((x - h) \sin(\theta_i) - (y - k) \cos(\theta_i)\big)^2}{(b_i + \Delta_o)^2} &= 1
 \end{align}
-Here, the curves depend on each other's rotation \(\theta_i\) as to have a uniform distance between both ellipses. They both share a center \((h, k)\). \(a_i\) and \(b_i\) are respectively the major and minor radii of the inner ellipse. The outer ellipse is produced by adding a value \(\Delta_o\) to these values where \(\Delta_o > 0\).
-\section{Defining the positions of the sectors}
+Here, the curves depend on each other's rotation \(\theta_i\) to have a uniform distance between both ellipses. They both share a center \((h, k)\). \(a_i\) and \(b_i\) are respectively the major and minor radii of the inner ellipse. The outer ellipse is produced by adding a value \(\Delta_o\) to these values where \(\Delta_o > 0\).
+\section{Defining the sectors' positions}
 Before defining the positions of our sectors, we have to define the starting point and end points of each part of the ellipses we are cutting. To do so, we can define starting and ending percentages to determine the overall space taken by a sector. Hence, we can define the following values:
 \begin{align}
   P_s &\in [0, 1[ \\
   P_e &\in ]P_s, 1]
 \end{align}
-Here $P_s$ is the starting percentage and $P_e$ the end percentage. Now with our percentage values, we can define the bounding points for our sectors. A sector is formed from from points on both ellipses, and are positioned based on the percentages used. So, we have to define rotation values for both percentages:
+Here $P_s$ is the starting percentage and $P_e$ the end percentage. Now with our percentage values, we can define the bounding points for our sectors. A sector is formed from points on both ellipses and is positioned based on the percentages used. So, we must define rotation values for both percentages:
 \begin{align}
   \theta_s &= 2\pi P_s\\
   \theta_e &= \theta_s + 2\pi P_e
 \end{align}
-Now we can define the sectors with points relating to these percentages. To do so, we must define some components of our points. First, let's define a common translation layer as our points are relative to the center \((h, k)\):
+Now we can define sectors with points relating to these percentages. To do so, we must define some components of our points. First, let's define a common translation layer as our points are relative to the center \((h, k)\):
 \begin{align}
   \textbf{T} = \begin{bmatrix}
     h\\
     k
   \end{bmatrix}
 \end{align}
-Then we can define a rotation matrix to simplify the definitions of the rotations multipliers for each part of our coordinate: 
+Then we can define a rotation matrix to simplify the definitions of the rotation's multipliers for each part of our coordinate: 
 \begin{align}
   \textbf{R}(\theta) = \begin{bmatrix}
     \cos(\theta) & -\sin(\theta)\\
     \sin(\theta) & \cos(\theta)\\
   \end{bmatrix}
 \end{align}
-Finally we only need the local coordinates on a standard ellipse :
+Finally, we only need the local coordinates on a standard ellipse:
 \begin{align}
   \textbf{v}(a, b, \theta) = \begin{bmatrix}
     a \cos \theta\\ 
     b \sin \theta
   \end{bmatrix}
 \end{align}
-Hence we can define a point as: 
+Hence, we can define a point as: 
 \begin{align}
   \mathbf{P}(a, b, \theta_1, \theta_2) = \mathbf{T} + \mathbf{R}(\theta_2) \mathbf{v}(a, b, \theta_1) 
 \end{align}
-We can then declare the following points as the one forming the part of our pie chart : 
+We can then declare the following points as the one forming the part of our pie chart: 
 \begin{align}
   &\mathrm{A} = \mathbf{P}(a_i, b_i, \theta_i, \theta_s)\\
   &\mathrm{B} = \mathbf{P}(a_i + \Delta_o, b_i + \Delta_o, \theta_i, \theta_s)\\
   &\mathrm{C} = \mathbf{P}(a_i, b_i, \theta_i, \theta_e)\\
   &\mathrm{D} = \mathbf{P}(a_i + \Delta_o, b_i + \Delta_o, \theta_i, \theta_e)
 \end{align}
-To draw a part of our chart, we must draw $\overline{AB}$ followed by $\arc{BD}$ and $\overline{DC}$ joining back by drawing $\arc{CA}$. 
+To draw a part of our chart, we must draw $\overline{AB}$ followed by $\arc{BD}$ and $\overline{DC}$, joining back by drawing $\arc{CA}$. 
 \end{document}

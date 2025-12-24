@@ -15,11 +15,11 @@ const data: JsPieChartData[] = [
     color: "#f8ad9d",
     data: 1,
   },
-    {
+  {
     color: "#fbc4ab",
     data: 1,
   },
-      {
+  {
     color: "#ffdab9",
     data: 1,
   },

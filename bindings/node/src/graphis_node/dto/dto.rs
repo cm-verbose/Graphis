@@ -7,7 +7,7 @@ use napi_derive::napi;
 #[napi(object)]
 pub struct JSPieConfig {
   pub center: (f64, f64),
-  pub chart_width: f64, 
+  pub chart_width: f64,
   pub chart_height: f64,
   pub width: f64,
   pub height: f64,
@@ -26,13 +26,12 @@ impl From<JSPieConfig> for PieChartConfig {
   fn from(value: JSPieConfig) -> Self {
     PieChartConfig {
       center: value.center,
-      chart_height: value.chart_height, 
+      chart_height: value.chart_height,
       chart_width: value.chart_width,
       width: value.width,
       height: value.height,
       rotation: value.rotation,
       radial_width: value.radial_width,
-
     }
   }
 }

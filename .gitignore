@@ -13,7 +13,7 @@ dist/
 *.pdf
 *.synctex.gz
 
-# TypeScript
+# Node
 *.tsbuildinfo
 node_modules/
 
