@@ -9,6 +9,6 @@ A data visualization library built with [Rust](https://rust-lang.org/) with bind
 
 ## Available bindings
 
-Chart / Binding | Node
-----------------|:----:
+Chart / Binding | [Node](https://nodejs.org/en)
+----------------|:------------------------------:
 Pie Chart       | ✓

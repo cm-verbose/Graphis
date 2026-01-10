@@ -1,8 +1,7 @@
-use std::f64::consts::PI;
-
 use crate::graphis::charts::pie_chart::{
   pie_chart_config::PieChartConfig, pie_chart_data::PieChartData,
 };
+use std::f64::consts::PI;
 use svg::{
   Document, Node,
   node::element::{Path, SVG, path::Data},
@@ -26,7 +25,7 @@ impl<'a> PieChart<'a> {
       chart_height,
       ..
     } = self.cfg;
-    let mut root = Document::new().set("viewBox", (0, 0, chart_width, chart_height));
+    let mut root: SVG = Document::new().set("viewBox", (0, 0, chart_width, chart_height));
 
     if self.data.len() == 1 {
       self.draw_singular_sector(&mut root)?;
